@@ -15,22 +15,16 @@ class Strandingreport extends Model
     use HasSlug;
     use SoftDeletes;
 
+    use \Znck\Eloquent\Traits\BelongsToThrough;
+
     protected $fillable = [
         'user_id',
-        'province_id',
-        'location',
-        'group_id',
-        'category_id',
         'informant_name',
         'partner',
-        'species_id',
         'quantity_id',
         'count',
-        'information_date',
         'code_id',
         'gender',
-        'latitude',
-        'longitude',
         'title',
         'report',
         'start_handling_date',
@@ -46,11 +40,32 @@ class Strandingreport extends Model
 
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Listen for the 'saved' event
+        static::saved(function ($strandingreport) {
+            // Assuming the slug is automatically generated and saved in the 'slug' attribute
+            $slug = $strandingreport->slug;
+
+            // Save the slug to the related Map
+            $map = $strandingreport->map()->firstOrCreate([]);
+            $map->map_slug = $slug; // Make sure 'map_slug' is the correct column name in your 'maps' table
+            $map->save();
+        });
+    }
+
+    public function map()
+    {
+        return $this->hasOne(Map::class);
+    }
+
     
     public function getSlugOptions() : SlugOptions
     {
         return SlugOptions::create()
-            ->generateSlugsFrom(['information_date', 'location', 'category.category'])
+            ->generateSlugsFrom(['information_date', 'location', 'category.map.category'])
             ->saveSlugsTo('slug');
     }
 
@@ -61,7 +76,7 @@ class Strandingreport extends Model
 
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsToThrough(Category::class, Map::class);
     }
 
     public function followers()
@@ -76,17 +91,17 @@ class Strandingreport extends Model
 
     public function province()
     {
-        return $this->belongsTo(Province::class);
+        return $this->belongsToThrough(Province::class, Map::class);
     }
 
     public function group()
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsToThrough(Group::class, Map::class);
     }
 
     public function species()
     {
-        return $this->belongsTo(Species::class);
+        return $this->belongsToThrough(Species::class, Map::class);
     }
 
     public function quantity()

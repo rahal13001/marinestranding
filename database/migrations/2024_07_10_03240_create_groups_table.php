@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->string('group_name');
+            $table->string('icon')->nullable();
+            $table->timestamps();
             $table->softDeletes();
         });
     }

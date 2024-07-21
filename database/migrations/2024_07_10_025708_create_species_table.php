@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('species', function (Blueprint $table) {
             $table->id();
+            $table->string('slug')->unique();
             $table->foreignId('genera_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('group_id');
             $table->string('species');
             $table->string('local_name');
             $table->text('description')->nullable();

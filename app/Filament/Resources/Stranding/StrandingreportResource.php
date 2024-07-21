@@ -11,7 +11,10 @@ use Filament\Tables\Table;
 use App\Models\Stranding\Code;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use App\Models\Stranding\Species;
 use Dotswan\MapPicker\Fields\Map;
+use App\Models\Stranding\Category;
+use App\Models\Stranding\Province;
 use Filament\Forms\Components\View;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Actions;
@@ -25,13 +28,14 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Support\Enums\VerticalAlignment;
+use App\Models\Stranding\Group as SpeciesGroup;
+use Illuminate\Contracts\View\View as ListView;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Infolists\Components\Group as ListGroup;
 use Filament\Infolists\Components\Section as ListSection;
 use Mohamedsabil83\FilamentFormsTinyeditor\Components\TinyEditor;
 use App\Filament\Resources\Stranding\StrandingreportResource\Pages;
 use App\Filament\Resources\Stranding\StrandingreportResource\RelationManagers;
-use Illuminate\Contracts\View\View as ListView;
 
 class StrandingreportResource extends Resource
 {
@@ -72,16 +76,24 @@ class StrandingreportResource extends Resource
                             ->label('Mitra')
                             ->placeholder('Nama mitra yang terlibat')
                             ->maxLength(255),
-                        Forms\Components\DatePicker::make('information_date')
-                            ->label('Tanggal Informasi')
-                            ->required(),
-                        Forms\Components\Select::make('category_id')
-                            ->label('Kejadian')
-                            ->required()
-                            ->relationship('category', 'category')
-                            ->searchable()
-                            ->searchPrompt('Cari kejadian...')
-                            ->preload(),
+                        Group::make()
+                            ->relationship('map')
+                            ->schema([
+                                Forms\Components\DatePicker::make('information_date')
+                                    ->label('Tanggal Informasi')
+                                    ->required(),
+                        ]),
+                        Group::make()
+                        ->relationship('map')
+                        ->schema([
+                            Forms\Components\Select::make('category_id')
+                                    ->label('Kejadian')
+                                    ->required()
+                                    ->options(Category::pluck('category', 'id')->toArray())
+                                    ->searchable()
+                                    ->searchPrompt('Cari kejadian...')
+                                    ->preload(),
+                        ])
                     ])->collapsible(),
               
                Section::make('Lokasi')
@@ -89,11 +101,12 @@ class StrandingreportResource extends Resource
                ->schema([
                     Group::make()
                         ->columns(2)
+                        ->relationship('map')
                         ->schema([
                             Forms\Components\Select::make('province_id')
                                 ->label('Provinsi')
                                 ->required()
-                                ->relationship('province', 'province')
+                                ->options(Province::pluck('province', 'id')->toArray())
                                 ->searchable()
                                 ->searchPrompt('Cari provinsi...')
                                 ->preload(),
@@ -126,79 +139,93 @@ class StrandingreportResource extends Resource
                                         $livewire->dispatch('refreshMap');
                                     }
                                 }),
+
+                                Map::make('map_location')
+                                ->label('Location')
+                                ->columnSpanFull()
+                                ->default([
+                                    'lat' => -0.8909726,
+                                    'lng' => 131.3184784
+                                ])
+                                ->afterStateUpdated(function (Set $set, ?array $state): void {
+                                    $set('latitude', $state['lat']);
+                                    $set('longitude', $state['lng']);
+                                })
+                                ->afterStateHydrated(function ($record, Set $set, Get $get): void {
+                                    // $set('location', ['lat' => $record->latitude, 'lng' => $record->longitude]);
+                                    if ($record) {
+                                        $latitude = $record->latitude;
+                                        $longitude = $record->longitude;
+                    
+                                        if ($latitude && $longitude) {
+                                                $set('map_location', ['lat' => $latitude, 'lng' => $longitude]);
+                                        }
+                                    }
+                                })
+                                ->extraStyles([
+                                    'min-height: 50vh',
+                                    'border-radius: 20px'
+                                ])
+                                ->liveLocation()
+                                ->showMarker()
+                                ->markerColor("#22c55eff")
+                                ->showFullscreenControl()
+                                ->showZoomControl()
+                                ->draggable()
+                                ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
+                                ->zoom(7)
+                                ->detectRetina()
+                                //not error just the copilot debuging doesn't have this method yet
+                                ->showMyLocationButton()
+                                ->extraTileControl([])
+                                ->extraControl([
+                                    'zoomDelta'           => 1,
+                                    'zoomSnap'            => 2,
+                                ]),
                     ]),
                    
-                    Map::make('map_location')
-                        ->label('Location')
-                        ->columnSpanFull()
-                        ->default([
-                            'lat' => -0.8909726,
-                            'lng' => 131.3184784
-                        ])
-                        ->afterStateUpdated(function (Set $set, ?array $state): void {
-                            $set('latitude', $state['lat']);
-                            $set('longitude', $state['lng']);
-                        })
-                        ->afterStateHydrated(function ($record, Set $set, Get $get): void {
-                            // $set('location', ['lat' => $record->latitude, 'lng' => $record->longitude]);
-                            if ($record) {
-                                $latitude = $record->latitude;
-                                $longitude = $record->longitude;
-            
-                                if ($latitude && $longitude) {
-                                        $set('map_location', ['lat' => $latitude, 'lng' => $longitude]);
-                                }
-                            }
-                        })
-                        ->extraStyles([
-                            'min-height: 50vh',
-                            'border-radius: 20px'
-                        ])
-                        ->liveLocation()
-                        ->showMarker()
-                        ->markerColor("#22c55eff")
-                        ->showFullscreenControl()
-                        ->showZoomControl()
-                        ->draggable()
-                        ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
-                        ->zoom(7)
-                        ->detectRetina()
-                        //not error just the copilot debuging doesn't have this method yet
-                        ->showMyLocationButton()
-                        ->extraTileControl([])
-                        ->extraControl([
-                            'zoomDelta'           => 1,
-                            'zoomSnap'            => 2,
-                        ]),
+                    
                ])->collapsible(),
+               
               Section::make('Informasi Spesies')
                     ->description('Informasi Spesies yang Terdampar')
-                    ->columns(2)
                     ->schema([
-                        Forms\Components\Select::make('group_id')
-                            ->label('Kelompok')
-                            ->required()
-                            ->relationship('group', 'group_name')
-                            ->searchable()
-                            ->searchPrompt('Cari kelompok...')
-                            ->preload(),
-                        Forms\Components\Select::make('species_id')
-                            ->label('Spesies')
-                            ->relationship('species', 'species')
-                            ->searchable()
-                            ->searchPrompt('Cari spesies...')
-                            ->preload(),
-                        Forms\Components\Select::make('quantity_id')
-                            ->label('Kategori Berdasar Kuantitas')
-                            ->required()
-                            ->relationship('quantity', 'quantity')
-                            ->searchPrompt('Cari kategori...'),
-                        Forms\Components\TextInput::make('count')
-                            ->required()
-                            ->label('Jumlah')
-                            ->placeholder('Jumlah biota terdampar')
-                            ->suffix('ekor')
-                            ->numeric(),
+                        Group::make()
+                            ->columns(2)
+                            ->relationship('map')
+                            ->schema([
+                                Forms\Components\Select::make('group_id')
+                                    ->label('Kelompok')
+                                    ->required()
+                                    ->options(SpeciesGroup::pluck('group_name', 'id')->toArray())
+                                    ->required()
+                                    ->searchable()
+                                    ->searchPrompt('Cari kelompok...')
+                                    ->preload(),
+                                Forms\Components\Select::make('species_id')
+                                    ->label('Spesies')
+                                    ->required()
+                                    ->options(Species::pluck('species', 'id')->toArray())
+                                    ->searchable()
+                                    ->searchPrompt('Cari spesies...')
+                                    ->preload(),
+                            ]),
+                        Group::make()
+                            ->columns(2)
+                            ->schema([
+                                Forms\Components\Select::make('quantity_id')
+                                    ->label('Kategori Berdasar Kuantitas')
+                                    ->required()
+                                    ->relationship('quantity', 'quantity')
+                                    ->searchPrompt('Cari kategori...'),
+                                Forms\Components\TextInput::make('count')
+                                    ->required()
+                                    ->label('Jumlah')
+                                    ->required()
+                                    ->placeholder('Jumlah biota terdampar')
+                                    ->suffix('ekor')
+                                    ->numeric(),
+                            ])
                     ])->collapsible(),
                 Section::make('Informasi Detail')
                     ->description('Informasi Detail Spesies yang Terdampar (Dapat diisi menyusul)')
@@ -301,7 +328,7 @@ class StrandingreportResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('information_date')
+                Tables\Columns\TextColumn::make('map.information_date')
                     ->date()
                     ->label('Tanggal Informasi')
                     ->searchable()
@@ -310,17 +337,18 @@ class StrandingreportResource extends Resource
                     ->label('Penyusun')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('category.category')
+                Tables\Columns\TextColumn::make('map.category.category')
                     ->label('Kejadian')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('province.province')
+                Tables\Columns\TextColumn::make('map.province.province')
                     ->label('Provinsi')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('location')
+                Tables\Columns\TextColumn::make('map.location')
+                    ->label('Lokasi')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('species.species')
+                Tables\Columns\TextColumn::make('map.species.species')
                     ->label('Spesies')
                     ->searchable()
                     ->sortable(),
@@ -353,23 +381,26 @@ class StrandingreportResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\SelectFilter::make('category_id')
                     ->label('Kejadian')
-                    ->relationship('category', 'category')
+                    ->relationship('map.category', 'category')
+                    ->preload()
                     ->searchable(),
                 Tables\Filters\SelectFilter::make('province_id')
                     ->label('Provinsi')
-                    ->relationship('province', 'province')
+                    ->relationship('map.province', 'province')
+                    ->preload()
                     ->searchable(),
                 Tables\Filters\SelectFilter::make('species_id')
                     ->label('Spesies')
-                    ->relationship('species', 'species')
+                    ->relationship('map.species', 'species')
                     ->preload()
                     ->searchable(),
                 Tables\Filters\SelectFilter::make('group_id')
                     ->label('Kelompok')
-                    ->relationship('group', 'group_name')
+                    ->relationship('map.group', 'group_name')
+                    ->preload()
                     ->searchable(),
             ])
-            ->defaultSort('information_date', 'desc')
+            ->defaultSort('map.information_date', 'desc')
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
@@ -406,10 +437,10 @@ class StrandingreportResource extends Resource
                         TextEntry::make('partner')
                             ->label('Mitra')
                             ->weight(FontWeight::Bold),
-                        TextEntry::make('information_date')
+                        TextEntry::make('map.information_date')
                             ->label('Tanggal Informasi')
                             ->weight(FontWeight::Bold),
-                        TextEntry::make('category.category')
+                        TextEntry::make('map.category.category')
                             ->label('Kejadian')
                             ->weight(FontWeight::Bold)
                             ->color('primary'),
@@ -421,16 +452,16 @@ class StrandingreportResource extends Resource
                         ListGroup::make()
                             ->columns(2)
                             ->schema([
-                                TextEntry::make('province.province')
+                                TextEntry::make('map.province.province')
                                     ->label('Provinsi')
                                     ->weight(FontWeight::Bold),
-                                TextEntry::make('location')
+                                TextEntry::make('map.location')
                                     ->label('Lokasi')
                                     ->weight(FontWeight::Bold),
-                                TextEntry::make('latitude')
+                                TextEntry::make('map.latitude')
                                     ->label('Latitude')
                                     ->weight(FontWeight::Bold),
-                                TextEntry::make('longitude')
+                                TextEntry::make('map.longitude')
                                     ->label('Longitude')
                                     ->weight(FontWeight::Bold),
                             ]),
@@ -439,14 +470,14 @@ class StrandingreportResource extends Resource
                                 'min-height: 50vh',
                                 'border-radius: 50px'
                             ])
-                            ->state(fn ($record) => ['lat' => $record?->latitude, 'lng' => $record?->longitude])
+                            ->state(fn ($record) => ['lat' => $record?->map->latitude, 'lng' => $record?->map->longitude])
                             ->showMarker()
                             ->markerColor("#b91c1c")
                             ->showFullscreenControl()
                             ->draggable(false)
                             ->zoom(10)
                             //not error just the copilot debuging doesn't have this method yet
-                            ->visible(fn ($record) => $record?->latitude && $record?->longitude),
+                            ->visible(fn ($record) => $record?->map->latitude && $record?->map->longitude),
                        
                     ])->collapsible(),
 
@@ -454,11 +485,11 @@ class StrandingreportResource extends Resource
                     ->heading('Informasi Spesies')
                     ->columns(2)
                     ->schema([
-                        TextEntry::make('group.group_name')
+                        TextEntry::make('map.group.group_name')
                             ->label('Kelompok')
                             ->color('primary')
                             ->weight(FontWeight::Bold),
-                        TextEntry::make('species.species')
+                        TextEntry::make('map.species.species')
                             ->label('Spesies')
                             ->color('primary')
                             ->weight(FontWeight::Bold),
@@ -476,15 +507,18 @@ class StrandingreportResource extends Resource
                     ->schema([
                         TextEntry::make('title')
                             ->label('Judul Laporan')
+                            ->visible(fn ($record) => $record->title)
                             ->weight(FontWeight::Bold),
                         ListGroup::make()
                             ->columns(2)
                             ->schema([
                                 TextEntry::make('start_handling_date')
                                     ->label('Tanggal Mulai Penanganan')
+                                    ->visible(fn ($record) => $record->start_handling_date)
                                     ->weight(FontWeight::Bold),
                                 TextEntry::make('end_handling_date')
                                     ->label('Tanggal Selesai Penanganan')
+                                    ->visible(fn ($record) => $record->end_handling_date)
                                     ->weight(FontWeight::Bold),
                             ]),
                         TextEntry::make('report')
@@ -494,6 +528,7 @@ class StrandingreportResource extends Resource
                                 'infolists.components.report',
                                 ['state' => $state],
                             ))
+                            ->visible(fn ($record) => $record->report)
                             ->weight(FontWeight::Bold),
                         //listGroup for documentation, look the namespace if want to reuse it, because i use alias for this case
                         ListGroup::make()

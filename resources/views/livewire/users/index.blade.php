@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\User;
-use App\Models\Stranding\Strandingreport;
+use App\Models\Stranding\Map;
 use App\Models\Stranding\Province;
 use App\Models\Stranding\Species;
 use App\Models\Stranding\Group;
@@ -39,9 +39,12 @@ new class extends Component {
 
     public function strandings(): Collection
     {
-        return Strandingreport::with('category', 'group', 'species', 'province')
-            ->whereNotNull('latitude')
-            ->whereNotNull('longitude')
+        return Map::with('category', 'group', 'species', 'province')
+            // ->whereHas('group', function ($query) {
+            //     $query->whereNotNull('icon');
+            // })
+            // ->whereNotNull('latitude')
+            // ->whereNotNull('longitude')
             ->when($this->province_id, function ($query) {
                 $query->whereIn('province_id', $this->province_id);
             })
@@ -183,7 +186,7 @@ new class extends Component {
         });
     
         function displayMap(strandings) {
-
+            console.log(strandings);
             // Add new markers
             strandings.forEach((stranding) => {
                 var latitude = Number(stranding.latitude);
@@ -253,7 +256,7 @@ new class extends Component {
                             
                     var customIcon = L.Icon.extend({
                         options: {
-                            iconSize: [25, 25],
+                            iconSize: [30, 30],
                             iconAnchor: [15, 15],
                             popupAnchor: [0, -15],
                         }

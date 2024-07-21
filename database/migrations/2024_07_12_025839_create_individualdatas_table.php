@@ -19,6 +19,10 @@ return new class extends Migration
             $table->string('total_length')->nullable();
             $table->foreignId('method_id')->constrained()->onDelete('cascade');
             $table->text('ind_desc')->nullable();
+            $table->string('sample_code')->nullable();
+            $table->string('sample_doc1')->nullable();
+            $table->string('sample_doc2')->nullable();
+            $table->string('sample_doc3')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
