@@ -28,6 +28,13 @@ class GroupResource extends Resource
                     ->label('Nama Kelompok')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\FileUpload::make('icon')
+                    ->label('Icon')
+                    ->image()
+                    ->required()
+                    ->disk('public')
+                    ->directory('icons')
+                    ->maxSize(1024),
             ]);
     }
 

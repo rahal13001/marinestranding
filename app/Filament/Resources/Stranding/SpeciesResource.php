@@ -26,6 +26,10 @@ class SpeciesResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('group_id')
+                    ->required()
+                    ->label('Kelompok Biota')
+                    ->relationship('group', 'group_name'),
                 Forms\Components\Select::make('genera_id')
                     ->required()
                     ->options(Genera::all()->pluck('genera', 'id')->toArray())
@@ -44,6 +48,7 @@ class SpeciesResource extends Resource
                 Forms\Components\Textarea::make('description')
                     ->label('Deskripsi')
                     ->columnSpanFull(),
+                
             ]);
     }
 

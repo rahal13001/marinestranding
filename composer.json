@@ -12,12 +12,17 @@
         "filament/filament": "^3.2",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
+        "larswiegers/laravel-maps": "^0.18.0",
+        "livewire/livewire": "^3.5",
+        "livewire/volt": "^1.6",
         "mohamedsabil83/filament-forms-tinyeditor": "^2.3",
+        "robsontenorio/mary": "^1.34",
         "spatie/laravel-sluggable": "^3.6",
         "staudenmeir/belongs-to-through": "^2.5",
         "staudenmeir/eloquent-has-many-deep": "^1.7"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.13",
         "fakerphp/faker": "^1.23",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
