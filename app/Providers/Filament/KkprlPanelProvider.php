@@ -25,6 +25,7 @@ class KkprlPanelProvider extends PanelProvider
         return $panel
             ->id('kkprl')
             ->path('kkprl')
+            ->login()
             ->colors([
                 'primary' => Color::Amber,
             ])

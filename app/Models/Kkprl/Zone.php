@@ -5,10 +5,12 @@ namespace App\Models\Kkprl;
 use App\Models\Stranding\Province;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Zone extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = ['zone_name', 'province_id', 'description'];
 
@@ -20,6 +22,11 @@ class Zone extends Model
     public function kkprlmaps()
     {
         return $this->hasMany(Kkprlmap::class);
+    }
+
+    public function activityzone()
+    {
+        return $this->hasMany(Activityzone::class);
     }
 
 }

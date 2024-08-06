@@ -2,14 +2,16 @@
 
 namespace App\Models\Kkprl;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ActivityZone extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
-    protected $fillable = ['activity_id', 'zone_id', 'regulationstatus_id'];
+    protected $fillable = ['activity_id', 'zone_id', 'activitystatus_id'];
 
     public function activity()
     {
@@ -21,7 +23,7 @@ class ActivityZone extends Model
         return $this->belongsTo(Zone::class);
     }
 
-    public function activityStatus()
+    public function activitystatus()
     {
         return $this->belongsTo(Activitystatus::class);
     }
