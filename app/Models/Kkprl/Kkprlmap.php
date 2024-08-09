@@ -13,7 +13,7 @@ class Kkprlmap extends Model
 
     use SoftDeletes;
 
-    protected $fillable = ['zone_id', 'province_id', 'shp', 'color'];
+    protected $fillable = ['zone_id', 'province_id', 'shp', 'color', 'shp_type', 'regulation_id'];
 
     public function zone()
     {

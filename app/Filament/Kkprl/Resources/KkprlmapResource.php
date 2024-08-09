@@ -36,11 +36,19 @@ class KkprlmapResource extends Resource
                 Forms\Components\Select::make('regulation_id')
                     ->label('Regulasi')
                     ->relationship('regulation', 'regulation_name'),
+                Forms\Components\Select::make('shp_type')
+                    ->label('Tipe SHP')
+                    ->options([
+                        "LineString" => "Garis",
+                        "Polygon" => "Polygon",
+                        "Point" => "Titik",
+                    ])
+                    ->required(),
                 Forms\Components\FileUpload::make('shp')
                     ->label('geoJSON File')
                     ->visibility('public')
                     ->disk('public')
-                    ->acceptedFileTypes(['aplication/json'])
+                    ->acceptedFileTypes(['application/json'])
                     ->directory('peta_zonasi')
                     ->required(),
             ]);

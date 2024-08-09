@@ -13,6 +13,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Dotswan\MapPicker\Fields\Map;
 
 class KkprluseResource extends Resource
 {
@@ -41,6 +44,12 @@ class KkprluseResource extends Resource
                     ->label('Bentuk Kegiatan')
                     ->required()
                     ->maxLength(255),
+
+                Forms\Components\TextInput::make('subject_name')
+                    ->label('Subjek Hukum')
+                    ->required()
+                    ->maxLength(255),
+
                 Forms\Components\Select::make('subject_status')
                     ->label('Status KKPRL')
                     ->options([
@@ -48,18 +57,92 @@ class KkprluseResource extends Resource
                         "Konfirmasi" => "Konfirmasi",
                     ])
                     ->required(),
+
                 Forms\Components\TextInput::make('latitude')
                     ->label('Latitude')
-                    ->required(),
+                    ->live()
+                    ->numeric()
+                    ->afterStateUpdated(function (Set $set, Get $get, ?float $state, $livewire): void {
+                        $longitude = $get('longitude');
+                        if ($state && $longitude) {
+                            $set('map_location', ['lat' => $state, 'lng' => $longitude]);
+                            $livewire->dispatch('refreshMap');
+                        }
+                    }),
+        
                 Forms\Components\TextInput::make('longitude')
                     ->label('Longitude')
+                    ->live()
+                    ->numeric()
+                    ->afterStateUpdated(function (Set $set, Get $get, ?float $state, $livewire): void {
+                        $latitude = $get('latitude');
+                        if ($latitude && $state) {
+                            $set('map_location', ['lat' => $latitude, 'lng' => $state]);
+                            $livewire->dispatch('refreshMap');
+                        }
+                    }),
+
+                    Map::make('map_location')
+                                ->label('Lokasi')
+                                ->columnSpanFull()
+                                ->default([
+                                    'lat' => -0.8909726,
+                                    'lng' => 131.3184784
+                                ])
+                                ->afterStateUpdated(function (Set $set, ?array $state): void {
+                                    $set('latitude', $state['lat']);
+                                    $set('longitude', $state['lng']);
+                                })
+                                ->afterStateHydrated(function ($record, Set $set, Get $get): void {
+                                    // $set('location', ['lat' => $record->latitude, 'lng' => $record->longitude]);
+                                    if ($record) {
+                                        $latitude = $record->latitude;
+                                        $longitude = $record->longitude;
+                    
+                                        if ($latitude && $longitude) {
+                                                $set('map_location', ['lat' => $latitude, 'lng' => $longitude]);
+                                        }
+                                    }
+                                })
+                                ->extraStyles([
+                                    'min-height: 50vh',
+                                    'border-radius: 20px'
+                                ])
+                                ->liveLocation()
+                                ->showMarker()
+                                ->markerColor("#22c55eff")
+                                ->showFullscreenControl()
+                                ->showZoomControl()
+                                ->draggable()
+                                ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
+                                ->zoom(7)
+                                ->detectRetina()
+                                //not error just the copilot debuging doesn't have this method yet
+                                ->showMyLocationButton()
+                                ->extraTileControl([])
+                                ->extraControl([
+                                    'zoomDelta'           => 1,
+                                    'zoomSnap'            => 2,
+                                ]),
+                Forms\Components\ColorPicker::make('color')
+                    ->label('Warna')
                     ->required(),
                 Forms\Components\FileUpload::make('subject_shp')
                     ->label('GeoJson File')
                     ->visibility('public')
+                    ->maxSize(50024)
                     ->disk('public')
                     ->directory('peta_kkprl')
                     ->required(),
+
+                Forms\Components\TextInput::make('width')
+                    ->label('Luas')
+                    ->suffix('Ha'),
+
+                Forms\Components\TextInput::make('length')
+                    ->label('Panjang')
+                    ->suffix('Km'),
+
             ]);
     }
     

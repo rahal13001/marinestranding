@@ -102,7 +102,7 @@ new class extends Component {
         </x-slot:actions>
     </x-header>
 
-    <!-- TABLE  -->
+    <!-- Map  -->
     <x-card>
         <div id="map" class="h-[75vh] z-40 relative" wire:ignore></div>
     </x-card>
@@ -186,7 +186,7 @@ new class extends Component {
         });
     
         function displayMap(strandings) {
-            console.log(strandings);
+           
             // Add new markers
             strandings.forEach((stranding) => {
                 var latitude = Number(stranding.latitude);

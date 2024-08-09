@@ -14,10 +14,11 @@ class Kkprluse extends Model
 
     protected $fillable = [
         'province_id',
-        'subjectshp',
+        'subject_shp',
         'subject_activity',
-        'status',
-        'widht',
+        'color',
+        'subject_status',
+        'width',
         'length',
         'latitude',
         'longitude',

@@ -12,12 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('kkprluses', function (Blueprint $table) {
-            $table->string('subject_name')->nullable();
-            $table->integer('width',false)->nullable();
-            $table->integer('length',false)->nullable();
-            $table->decimal('latitude', 11, 8);
-            $table->decimal('longitude', 11, 8);
-
+            $table->string('color')->nullable();
         });
     }
 
@@ -27,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('kkprluses', function (Blueprint $table) {
-            //
+            $table->dropColumn('color');
         });
     }
 };
