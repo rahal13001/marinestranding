@@ -63,9 +63,8 @@
                 {{-- Theme toggle --}}
                 <x-theme-toggle class="hidden" />
                 
-
-                <x-menu-item title="Biota Laut Terdampar" icon="o-map" link="/" />
-                <x-menu-item title="Peta Ruang Laut" icon="o-map" link="/ruanglaut" />
+                <x-menu-item title="Biota Laut Terdampar" icon="o-map" href="{{route('mamalia')}}" />
+                <x-menu-item title="Peta Ruang Laut" icon="o-map" href="{{route('kkprl')}}" />
                 {{-- <x-menu-sub title="Web GIS" icon="o-cog-6-tooth">
                     <x-menu-item title="Biota Laut Terdampar" icon="o-wifi" link="####" />
                     <x-menu-item title="Archives" icon="o-archive-box" link="####" />
