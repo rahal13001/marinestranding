@@ -10,6 +10,7 @@
         "codeat3/blade-phosphor-icons": "^2.2",
         "dotswan/filament-map-picker": "^1.2",
         "filament/filament": "^3.2",
+        "guava/filament-nested-resources": "^1.2",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
         "larswiegers/laravel-maps": "^0.18.0",

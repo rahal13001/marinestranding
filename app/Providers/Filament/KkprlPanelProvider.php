@@ -25,6 +25,7 @@ class KkprlPanelProvider extends PanelProvider
         return $panel
             ->id('kkprl')
             ->path('kkprl')
+            //matikan untuk bebas dari login
             ->login()
             ->colors([
                 'primary' => Color::Amber,
@@ -34,6 +35,7 @@ class KkprlPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
+            //matikan untuk bebas dari login
             ->discoverWidgets(in: app_path('Filament/Kkprl/Widgets'), for: 'App\\Filament\\Kkprl\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
@@ -43,6 +45,7 @@ class KkprlPanelProvider extends PanelProvider
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
+                //matikan untuk bebas dari login
                 AuthenticateSession::class,
                 ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,

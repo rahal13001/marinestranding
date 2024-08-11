@@ -3,4 +3,4 @@
 use Livewire\Volt\Volt;
 
 Volt::route('/', 'users.index');
-Volt::route('/petakkprl', 'users.petakkprl');
+Volt::route('/ruanglaut', 'users.petakkprl');

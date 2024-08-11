@@ -182,11 +182,13 @@ new class extends Component {
                         layer.on('click', function(e) {
                             // Extract the clicked coordinates
                             const clickedLatLng = e.latlng;
+                            const kawasan = kkprlmap.zone.namakawasan ? `<p class="text-md font-bold tracking-tight text-gray-900 dark:gray-400">Zona : <i>${kkprlmap.zone.zone_name}</i></p>` : '';
 
                             // Update the popup content with the clicked coordinates
                             let popupContent = `
                                 <container class="p-4 max-w-sm mx-auto bg-white rounded-lg dark:bg-gray-800 sm:max-w-sm">
                                     <p class="text-md font-bold tracking-tight text-gray-900 dark:gray-400">Zona : <i>${kkprlmap.zone.zone_name}</i></p>
+                                    ${kawasan}
                                     <p class="text-gray-700 dark:text-gray-400">Di Provinsi ${kkprlmap.province.province}
                                         <br>
                                         Dasar Hukum ${kkprlmap.regulation.regulation_number} tentang ${kkprlmap.regulation.regulation_name}
@@ -215,6 +217,7 @@ new class extends Component {
             for (const kkprlmap of kkprlmaps) {
                 for (const kkprl of kkprlmap){
                     const response1 = await fetch('storage/' + kkprl.shp);
+                    const kawasan = kkprl.zone.namakawasan ? `<p class="text-md font-bold tracking-tight text-gray-900 dark:gray-400">Zona : <i>${kkprl.zone.zone_name}</i></p>` : '';
                     const geojsonFeature1 = await response1.json();
                     const style = {
                         "color": kkprl.color,
@@ -232,6 +235,7 @@ new class extends Component {
                                 let popupContent = `
                                     <container class="p-4 max-w-sm mx-auto bg-white rounded-lg dark:bg-gray-800 sm:max-w-sm">
                                         <p class="text-md font-bold tracking-tight text-gray-900 dark:gray-400">Zona : <i>${kkprl.zone.zone_name}</i></p>
+                                        ${kawasan}
                                         <p class="text-gray-700 dark:text-gray-400">Di Provinsi ${kkprl.province.province}
                                             <br>
                                             Dasar Hukum ${kkprl.regulation.regulation_number} tentang ${kkprl.regulation.regulation_name}
@@ -293,8 +297,8 @@ new class extends Component {
                                             </tr>
                                             ${kkprluse.width != null ? `
                                                 <tr>
-                                                    <td class="font-bold text-gray-700 dark:text-gray-400">Luas KKPRL</td>
-                                                    <td class="text-gray-700 dark:text-gray-400">: ${kkprluse.width} Ha</td>
+                                                    <td class="font-bold text-gray-700 dark:text-gray-400">Luas/Panjang</td>
+                                                    <td class="text-gray-700 dark:text-gray-400">: ${kkprluse.width} Ha / ${kkprluse.length} Km</td>
                                                 </tr>
                                             ` : ''}
                                         </tbody>
@@ -316,9 +320,11 @@ new class extends Component {
                     map.removeLayer(kkprldata);
                 });
                 kkprldatas = [];
+
                 if (!kkprluses.length) return;
 
-                        
+                
+                
             for (const kkprluse of kkprluses) {
                 for (const kkprl of kkprluse){
                     const response1 = await fetch('storage/' + kkprl.subject_shp);
@@ -328,12 +334,19 @@ new class extends Component {
                         "weight": 2,
                         "opacity": 0.75
                     };
+
+                    
                     const layerdata = L.geoJSON(geojsonFeature1, {
                         style: style,
                         onEachFeature: function (feature, layer) {
                             layer.on('click', function(e) {
                                 // Extract the clicked coordinates
                                 const clickedLatLng = e.latlng;
+
+                                 // Determine width and length values
+                                const width = kkprl.width ? `${kkprl.width} Ha` : '-';
+                                const length = kkprl.length ? `${kkprl.length} Km` : '-';
+                               
                                 
                                 // Update the popup content with the clicked coordinates
                                 let popupContent = `
@@ -356,14 +369,11 @@ new class extends Component {
                                                     <td class="font-bold text-gray-700 dark:text-gray-400">Jenis KKPRL</td>
                                                     <td class="text-gray-700 dark:text-gray-400">: ${kkprl.subject_status}</td>
                                                 </tr>
-                                                ${kkprl.width ? `<tr>
-                                                    <td class="font-bold text-gray-700 dark:text-gray-400">Luas KKPRL</td>
-                                                    <td class="text-gray-700 dark:text-gray-400">: ${kkprl.width} Ha</td>
-                                                </tr>` : ''}
-                                                ${kkprl.length ? `<tr>
-                                                    <td class="font-bold text-gray-700 dark:text-gray-400">Panjang KKPRL</td>
-                                                    <td class="text-gray-700 dark:text-gray-400">: ${kkprl.length} Km</td>
-                                                </tr>` : ''}
+                                               <tr>
+                                                <td class="font-bold text-gray-700 dark:text-gray-400">Luas / Panjang</td>
+                                                <td class="text-gray-700 dark:text-gray-400">: ${width} / ${length}</td>
+                                            </tr>
+                                             
                                             </tbody>
                                         </table>
                                         <p class="text-gray-700 dark:text-gray-400 text-xs">Koordinat area yang di klik lat : ${clickedLatLng.lat}, lon : ${clickedLatLng.lng}</p>

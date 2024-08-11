@@ -32,6 +32,10 @@ class ZoneResource extends Resource
                     ->label('Zona')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('namakawasan')
+                    ->label('Nama Kawasan (Jika Ada)')
+                    ->nullable()
+                    ->maxLength(255),
                 Forms\Components\Textarea::make('description')
                     ->label('Deskripsi')
                     ->columnSpanFull(),
