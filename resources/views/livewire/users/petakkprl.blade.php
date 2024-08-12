@@ -182,7 +182,7 @@ new class extends Component {
                         layer.on('click', function(e) {
                             // Extract the clicked coordinates
                             const clickedLatLng = e.latlng;
-                            const kawasan = kkprlmap.zone.namakawasan ? `<p class="text-md font-bold tracking-tight text-gray-900 dark:gray-400">Zona : <i>${kkprlmap.zone.namakawasan}</i></p>` : '';
+                            const kawasan = kkprlmap.zone.namakawasan ? `<p class="text-md font-bold tracking-tight text-gray-900 dark:gray-400">Nama Kawasan : <i>${kkprlmap.zone.namakawasan}</i></p>` : '';
 
                             // Update the popup content with the clicked coordinates
                             let popupContent = `
@@ -217,7 +217,7 @@ new class extends Component {
             for (const kkprlmap of kkprlmaps) {
                 for (const kkprl of kkprlmap){
                     const response1 = await fetch('storage/' + kkprl.shp);
-                    const kawasan = kkprl.zone.namakawasan ? `<p class="text-md font-bold tracking-tight text-gray-900 dark:gray-400">Zona : <i>${kkprl.zone.namakawasan}</i></p>` : '';
+                    const kawasan = kkprl.zone.namakawasan ? `<p class="text-md font-bold tracking-tight text-gray-900 dark:gray-400">Nama Kawasan : <i>${kkprl.zone.namakawasan}</i></p>` : '';
                     const geojsonFeature1 = await response1.json();
                     const style = {
                         "color": kkprl.color,
