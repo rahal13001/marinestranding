@@ -2,16 +2,17 @@
 
 namespace App\Filament\Kkprl\Resources;
 
-use App\Filament\Kkprl\Resources\KkprlmapResource\Pages;
-use App\Filament\Kkprl\Resources\KkprlmapResource\RelationManagers;
-use App\Models\Kkprl\Kkprlmap;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
+use App\Models\Kkprl\Zone;
 use Filament\Tables\Table;
+use App\Models\Kkprl\Kkprlmap;
+use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Kkprl\Resources\KkprlmapResource\Pages;
+use App\Filament\Kkprl\Resources\KkprlmapResource\RelationManagers;
 
 class KkprlmapResource extends Resource
 {
@@ -31,7 +32,13 @@ class KkprlmapResource extends Resource
                     ->required(),
                 Forms\Components\Select::make('zone_id')
                     ->label('Zona')
-                    ->relationship('zone', 'zone_name')
+                    ->options(Zone::all()->mapWithKeys(function ($zone) {
+                        $displayName = $zone->zone_name;
+                        if ($zone->namakawasan) {
+                            $displayName .= " ({$zone->namakawasan})";
+                        }
+                        return [$zone->id => $displayName];
+                    })->toArray())
                     ->required(),
                 Forms\Components\Select::make('regulation_id')
                     ->label('Regulasi')

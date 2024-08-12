@@ -12,7 +12,7 @@ class Zone extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['zone_name', 'province_id', 'description'];
+    protected $fillable = ['zone_name', 'province_id', 'description', 'namakawasan'];
 
     public function province()
     {
