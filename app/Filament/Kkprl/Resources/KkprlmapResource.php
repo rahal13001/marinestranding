@@ -67,15 +67,18 @@ class KkprlmapResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('No')
                     ->rowIndex(),
-                Tables\Columns\TextColumn::make('province_id')
+                Tables\Columns\TextColumn::make('province.province')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('color')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('zone_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('zone.zone_name')
+                   ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('regulation_id')
+                Tables\Columns\TextColumn::make('zone.namakawasan')
+                    ->searchable()
+                     ->sortable(),
+                Tables\Columns\TextColumn::make('regulation.regulation_name')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('deleted_at')
