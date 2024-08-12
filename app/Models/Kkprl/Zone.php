@@ -26,7 +26,7 @@ class Zone extends Model
 
     public function activityzone()
     {
-        return $this->hasMany(Activityzone::class);
+        return $this->hasMany(ActivityZone::class);
     }
 
 }
