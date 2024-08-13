@@ -257,6 +257,7 @@ new class extends Component {
             }
         }
 
+        
         async function displayKkprluse(kkprluses) {
     if (!kkprluses.length) return;
     
