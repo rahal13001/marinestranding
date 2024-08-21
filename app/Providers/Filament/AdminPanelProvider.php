@@ -24,8 +24,8 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
-            ->id('pegawai')
-            ->path('pegawai')
+            ->id('biotalaut')
+            ->path('biotalaut')
             ->login()
             ->colors([
                 'primary' => Color::Amber,
