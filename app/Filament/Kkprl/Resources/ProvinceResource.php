@@ -2,10 +2,9 @@
 
 namespace App\Filament\Kkprl\Resources;
 
-use App\Filament\Kkprl\Resources\ZoneResource\Pages;
-use App\Filament\Kkprl\Resources\ZoneResource\RelationManagers;
-use App\Filament\Kkprl\Resources\ZoneResource\RelationManagers\ZoneNameRelationManager;
-use App\Models\Kkprl\Zone;
+use App\Filament\Kkprl\Resources\ProvinceResource\Pages;
+use App\Filament\Kkprl\Resources\ProvinceResource\RelationManagers;
+use App\Models\Stranding\Province;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,33 +13,21 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ZoneResource extends Resource
+class ProvinceResource extends Resource
 {
-    protected static ?string $model = Zone::class;
+    protected static ?string $model = Province::class;
 
-    protected static ?string $navigationIcon = 'heroicon-s-map-pin';
-    protected static ?string $navigationGroup = 'Peta Tata Ruang Laut';
-    protected static ?int $navigationSort = 2;
+    protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
+    protected static ?string $navigationGroup = 'Pendukung';
+    protected static ?int $navigationSort = 6;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('province_id')
-                    ->label('Provinsi')
-                    ->relationship('province', 'province')
-                    ->required(),
-                Forms\Components\TextInput::make('zone_name')
-                    ->label('Zona')
+                Forms\Components\TextInput::make('province')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('namakawasan')
-                    ->label('Nama Kawasan (Jika Ada)')
-                    ->nullable()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->label('Deskripsi')
-                    ->columnSpanFull(),
             ]);
     }
 
@@ -48,25 +35,17 @@ class ZoneResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('No')
-                    ->rowIndex(),
-                Tables\Columns\TextColumn::make('province.province')
-                    ->label('Provinsi')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('zone_name')
-                    ->label('Zona')
-                    ->sortable()
+                Tables\Columns\TextColumn::make('province')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('deleted_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -90,17 +69,17 @@ class ZoneResource extends Resource
     public static function getRelations(): array
     {
         return [
-            ZoneNameRelationManager::class, //RELATION
+            //
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListZones::route('/'),
-            'create' => Pages\CreateZone::route('/create'),
-            'view' => Pages\ViewZone::route('/{record}'),
-            'edit' => Pages\EditZone::route('/{record}/edit'),
+            'index' => Pages\ListProvinces::route('/'),
+            'create' => Pages\CreateProvince::route('/create'),
+            'view' => Pages\ViewProvince::route('/{record}'),
+            'edit' => Pages\EditProvince::route('/{record}/edit'),
         ];
     }
 
@@ -116,11 +95,11 @@ class ZoneResource extends Resource
     {
         $locale = app()->getLocale();
         if ($locale === 'id') {
-            return "Zona";
+            return "Provinsi";
         }
         else
         {
-            return "Zone";
+            return "Province";
         }
     }
 }

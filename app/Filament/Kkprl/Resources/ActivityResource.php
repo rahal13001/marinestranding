@@ -20,6 +20,8 @@ class ActivityResource extends Resource
     // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationIcon = 'phosphor-shapes';
+    protected static ?string $navigationGroup = 'Pendukung';
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {

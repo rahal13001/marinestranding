@@ -55,6 +55,7 @@ class KkprlPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->sidebarCollapsibleOnDesktop();;
     }
 }

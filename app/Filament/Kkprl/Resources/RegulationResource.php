@@ -17,7 +17,9 @@ class RegulationResource extends Resource
 {
     protected static ?string $model = Regulation::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-scale';
+    protected static ?string $navigationGroup = 'Peta Tata Ruang Laut';
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
@@ -49,8 +51,6 @@ class RegulationResource extends Resource
                 Tables\Columns\TextColumn::make('No')
                     ->rowIndex(),
                 Tables\Columns\TextColumn::make('regulation_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('regulation')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

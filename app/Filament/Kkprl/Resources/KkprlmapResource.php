@@ -17,8 +17,10 @@ use App\Filament\Kkprl\Resources\KkprlmapResource\RelationManagers;
 class KkprlmapResource extends Resource
 {
     protected static ?string $model = Kkprlmap::class;
+    protected static ?string $navigationGroup = 'Peta Tata Ruang Laut';
+    protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-map';
 
     public static function form(Form $form): Form
     {
@@ -139,7 +141,7 @@ class KkprlmapResource extends Resource
     {
         $locale = app()->getLocale();
         if ($locale === 'id') {
-            return "Peta KKPRL";
+            return "Peta Tata Ruang Laut";
         }
         else
         {

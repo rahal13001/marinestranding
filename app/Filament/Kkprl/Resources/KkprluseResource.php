@@ -20,8 +20,9 @@ use Dotswan\MapPicker\Fields\Map;
 class KkprluseResource extends Resource
 {
     protected static ?string $model = Kkprluse::class;
+    protected static ?string $navigationGroup = 'Peta Pemanfaatan Ruang Laut';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-globe-asia-australia';
 
     public static function form(Form $form): Form
     {
@@ -58,6 +59,9 @@ class KkprluseResource extends Resource
                     ])
                     ->required(),
 
+                Forms\Components\DatePicker::make('tanggal_terbit')
+                    ->label('Tgl. Terbit')
+                    ->required(),
                 Forms\Components\TextInput::make('latitude')
                     ->label('Latitude')
                     ->live()
@@ -152,14 +156,25 @@ class KkprluseResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('No')
                     ->rowIndex(),
-                Tables\Columns\TextColumn::make('province_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('province.province')
+                    ->label('Provinsi')
+                    ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('shp_type')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('subject_name')
+                    ->label('Subjek Hukum')
+                    ->searchable()
+                    ->sortable(),
+                
+                Tables\Columns\TextColumn::make('tanggal_terbit')
+                    ->label('Tgl. Terbit')
+                    ->searchable()
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('subject_activity')
+                    ->label('Bentuk Kegiatan')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('subject_status')
+                    ->label('Status KKPRL')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()

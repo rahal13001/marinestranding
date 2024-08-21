@@ -16,8 +16,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ActivitystatusResource extends Resource
 {
     protected static ?string $model = Activitystatus::class;
+    protected static ?int $navigationSort = 5;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
+    protected static ?string $navigationGroup = 'Pendukung';
 
     public static function form(Form $form): Form
     {
