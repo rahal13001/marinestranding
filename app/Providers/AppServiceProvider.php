@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 use BezhanSalleh\PanelSwitch\PanelSwitch;
 
@@ -34,6 +37,11 @@ class AppServiceProvider extends ServiceProvider
                 ->slideOver()
                 ->modalWidth('sm')
                 ->simple();
+        });
+
+        // Register the 'public-api' rate limiter
+        RateLimiter::for('public-api', function (Request $request) {
+            return Limit::perMinute(60)->by($request->ip());
         });
     }
 }

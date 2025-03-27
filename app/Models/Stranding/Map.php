@@ -47,4 +47,9 @@ class Map extends Model
         return $this->belongsTo(Group::class);
     }
 
+    public function code()
+    {
+        return $this->belongsTo(Code::class);
+    }
+
 }

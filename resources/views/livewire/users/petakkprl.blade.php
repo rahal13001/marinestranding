@@ -57,7 +57,9 @@ new class extends Component {
 
     public function with(): array
     {
+        //untuk filter periksa apakah kkprl dinyalakan, jika ya tampilkan
         $kkprlusefiltered = $this->rooms_use ? $this->kkprlUses() : collect([]);
+        //untuk filter penggunaan ruang periksa apakah peta tata ruang digunakan jika ya tampilkan
         $kkprlmapfiltered = $this->rooms ? $this->kkprlMaps() : collect([]); // Condition based on rooms
         $this->dispatch('kkprlmapUpdated', $kkprlmapfiltered);
         $this->dispatch('kkprluseUpdated', $kkprlusefiltered);

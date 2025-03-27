@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -18,6 +19,7 @@ class User extends Authenticatable implements FilamentUser
     use SoftDeletes;
     use HasRoles;
     use HasPanelShield;
+    use HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
